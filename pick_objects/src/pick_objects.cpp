@@ -7,7 +7,7 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 int main(int argc, char** argv){
   // Initialize the simple_navigation_goals node
-  ros::init(argc, argv, "simple_navigation_goals");
+  ros::init(argc, argv, "pick_objects");
 
   //tell the action client that we want to spin a thread by default
   MoveBaseClient ac("move_base", true);
@@ -25,11 +25,11 @@ int main(int argc, char** argv){
 
   // Define a position and orientation for the robot to reach
   goal.target_pose.pose.position.x = 2.0;
-  goal.target_pose.pose.position.y = 1.3;
+  goal.target_pose.pose.position.y = 1.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
    // Send the goal position and orientation for the robot to reach
-  ROS_INFO("Sending pick-up goal");
+  ROS_INFO("Sending goal");
   ac.sendGoal(goal);
 
   // Wait an infinite time for the results
@@ -37,31 +37,36 @@ int main(int argc, char** argv){
 
   // Check if the robot reached its goal
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    ROS_INFO("Hooray, the robot reached its goal at x=%f, y=%f", goal.target_pose.pose.position.x, goal.target_pose.pose.position.y );
+    ROS_INFO("Hooray, turtlebot reached the pickup zone. Picking up...");
   else
-    ROS_INFO("The base failed to reach its goal for some reason");
+    ROS_INFO("The turtlebot failed to reach the pickup zone for some reason");
 
-  // Wait 5 sec before moving on
   ros::Duration(5.0).sleep();
 
+  move_base_msgs::MoveBaseGoal goal1;
+
+  // set up the frame parameters
+  goal1.target_pose.header.frame_id = "map";
+  goal1.target_pose.header.stamp = ros::Time::now();
+
   // Define a position and orientation for the robot to reach
-  goal.target_pose.pose.position.x = -1.0;
-  goal.target_pose.pose.position.y = -1.0;
-  goal.target_pose.pose.orientation.w = 1.0;
+  goal1.target_pose.pose.position.x = -2.0;
+  goal1.target_pose.pose.position.y = -1.0;
+  goal1.target_pose.pose.orientation.w = 1.0;
 
    // Send the goal position and orientation for the robot to reach
-  ROS_INFO("Sending to drop-off");
-  ac.sendGoal(goal);
+  ROS_INFO("Sending goal");
+  ac.sendGoal(goal1);
 
   // Wait an infinite time for the results
   ac.waitForResult();
 
   // Check if the robot reached its goal
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-    ROS_INFO("Hooray, the robot reached its goal at x=%f, y=%f", goal.target_pose.pose.position.x, goal.target_pose.pose.position.y );
+    ROS_INFO("Hooray, the turtlebot reached the drop off zone");
   else
-    ROS_INFO("The base failed to reach its goal for some reason");
+    ROS_INFO("The turtlebot failed to reach the drop off zone for some reason");
 
-
+  
   return 0;
 }
