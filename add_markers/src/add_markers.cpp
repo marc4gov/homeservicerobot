@@ -2,7 +2,6 @@
 #include <visualization_msgs/Marker.h>
 #include <move_base_msgs/MoveBaseActionFeedback.h>
 #include <math.h> 
-// %EndTag(INCLUDES)%
 
 bool picking_up = false;
 bool dropping_off = false;
@@ -18,8 +17,8 @@ void get_move_base(const move_base_msgs::MoveBaseActionFeedback::ConstPtr &msg){
 
   float robot_pose_x = msg->feedback.base_position.pose.position.x;
   float robot_pose_y = msg->feedback.base_position.pose.position.y;
-ROS_INFO("Robot pose x = %f", robot_pose_x);
-ROS_INFO("Robot pose y = %f", robot_pose_y);
+  ROS_INFO("Robot pose x = %f", robot_pose_x);
+  ROS_INFO("Robot pose y = %f", robot_pose_y);
 
   float distance = 0.0;
   if(!picking_up){
@@ -29,7 +28,7 @@ ROS_INFO("Robot pose y = %f", robot_pose_y);
       ROS_INFO("In the pick up zone");
       picking_up = true;
     }
-  }else if(!dropping_off){
+  } else if(!dropping_off){
     distance = sqrt(pow((drop_off_x - robot_pose_x ), 2) + pow((drop_off_y- robot_pose_y), 2));
     ROS_INFO("Distance to drop off zone = %f", distance);
     if(distance <= 0.5){
